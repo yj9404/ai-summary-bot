@@ -41,20 +41,20 @@ def summarize_messages(messages):
 
 {joined}
 """
-    response = openAiClient.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "당신은 알림 메시지를 요약하는 비서입니다."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3,
-        max_tokens=500
-    )
+    # response = openAiClient.chat.completions.create(
+    #     model="gpt-3.5-turbo",
+    #     messages=[
+    #         {"role": "system", "content": "당신은 알림 메시지를 요약하는 비서입니다."},
+    #         {"role": "user", "content": prompt}
+    #     ],
+    #     temperature=0.3,
+    #     max_tokens=500
+    # )
 
-    return response.choices[0].message.content.strip()
-    # model = genai.GenerativeModel('gemini-1.5-pro')
-    # response = model.generate_content(prompt)
-    # return response.text.strip()
+    # return response.choices[0].message.content.strip()
+    model = genai.GenerativeModel('gemini-1.5-pro')
+    response = model.generate_content(prompt)
+    return response.text.strip()
 
 def post_summary(summary):
     client.chat_postMessage(
