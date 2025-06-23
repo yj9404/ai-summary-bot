@@ -12,7 +12,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 client = WebClient(token=SLACK_TOKEN)
-openai.api_key = OPENAI_API_KEY
+openAiClient = openai.OpenAI(api_key=OPENAI_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 
 def get_yesterday_messages():
     now = datetime.datetime.now()
@@ -40,7 +41,7 @@ def summarize_messages(messages):
 
 {joined}
 """
-    response = openai.ChatCompletion.create(
+    response = openAiClient.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "당신은 알림 메시지를 요약하는 비서입니다."},
@@ -49,10 +50,11 @@ def summarize_messages(messages):
         temperature=0.3,
         max_tokens=500
     )
+
+    return summary = response.choices[0].message.content.strip()
     # model = genai.GenerativeModel('gemini-1.5-pro')
     # response = model.generate_content(prompt)
     # return response.text.strip()
-    return response["choices"][0]["message"]["content"]
 
 def post_summary(summary):
     client.chat_postMessage(
