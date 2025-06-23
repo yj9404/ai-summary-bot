@@ -56,7 +56,7 @@ def get_all_messages(channel_id, start_ts, end_ts):
         
         # 다음 커서 설정
         cursor = response["response_metadata"]["next_cursor"]
-
+    
     return messages
 
 
@@ -65,12 +65,18 @@ def summarize_messages(messages):
         return "어제는 알림 메시지가 없습니다."
 
     joined = "\n".join(messages)
-    prompt = f"""다음은 오늘 Slack 알림 메시지들의 목록입니다. 아래 기준에 따라 요약해 주세요:
-1. 기관별로 어떤 오류가 발생했는지, 오류 종류별 건수를 집계해 항목별로 정리해 주세요.
-2. 총 오류 발생 건수를 맨 위에 알려주세요.
-3. "[카카오 인증] 거래대사 비교" 항목은, 인증 건수의 최종 차이가 0이면 생략하고, 0이 아닌 경우에만 포함시켜 주세요.
-4. 결과는 Slack에서 마크다운(`mrkdwn`) 형식으로 표현할 수 있도록 출력해 주세요.
-
+    prompt = f"""다음은 오늘 Slack 알림 메시지 목록입니다. 아래 정보를 정리해서 알려주세요
+    1. 어떤 기관에서 어떤 오류가 몇 건 발생했는지 요약해서 항목별로 정리해 주세요. 
+    2. '[카카오 인증] 거래대사 비교'항목은 가장 최근 메세지 기준으로 건수 차이가 0이면 출력하지 말고 0이 아니라면 알려주세요.
+    3. 출력 예시는 아래와 같습니다.
+    *총 오류 발생 건수: 56건*
+    1. 기관이름(기관코드): 53건
+        • ETC (KafkaReplyTimeoutException): 27건
+            • API: 청구서 조회(/paybill/kakao/v2/notice): 11건
+            • API: 납부 가능 조회(/paybill/kakao/v2/prepay): 16건
+        • KAFKA_ERROR (CommitFailedException): 26건
+            • API: 납부 가능 조회(/kakao/prepay): 19건
+            • API: 청구서 조회(/kakao/notice): 7건
 
 {joined}
 """
