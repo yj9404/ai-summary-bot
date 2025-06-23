@@ -51,7 +51,7 @@ def summarize_messages(messages):
         max_tokens=500
     )
 
-    return summary = response.choices[0].message.content.strip()
+    return response.choices[0].message.content.strip()
     # model = genai.GenerativeModel('gemini-1.5-pro')
     # response = model.generate_content(prompt)
     # return response.text.strip()
