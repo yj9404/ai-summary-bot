@@ -17,8 +17,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 def get_yesterday_messages():
     now = datetime.datetime.now()
-    # yesterday = now - datetime.timedelta(days=1)
-    yesterday = now
+    yesterday = now - datetime.timedelta(days=1)
     start = datetime.datetime(yesterday.year, yesterday.month, yesterday.day)
     end = start + datetime.timedelta(days=1)
 
