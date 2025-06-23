@@ -98,8 +98,8 @@ def summarize_messages(messages):
 
 def post_summary(summary):
     client.chat_postMessage(
-        # channel=CHANNEL_ID,
-        channel="C0924850G11",
+        channel=CHANNEL_ID,
+        # channel="C0924850G11",
         text="에러 알림 전일자 요약",
         blocks=[
             {
