@@ -42,7 +42,7 @@ def summarize_messages(messages):
 {joined}
 """
     response = openAiClient.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "당신은 알림 메시지를 요약하는 비서입니다."},
             {"role": "user", "content": prompt}
