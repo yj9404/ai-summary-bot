@@ -10,8 +10,9 @@ from slack_sdk.errors import SlackApiError
 # 기본 설정
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
-# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 print(SLACK_TOKEN)
 print(CHANNEL_ID)
 print(GEMINI_API_KEY)
