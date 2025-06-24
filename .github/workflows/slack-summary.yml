@@ -2,7 +2,7 @@ name: Slack Summary
 
 on:
   schedule:
-    - cron: '30 23 * * *'  # 매일 00:00 UTC = KST 09:00
+    - cron: '20 23 * * *'  # 매일 00:00 UTC = KST 09:00
   workflow_dispatch:
 
 jobs:
