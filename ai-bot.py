@@ -13,10 +13,6 @@ CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-print(SLACK_TOKEN)
-print(CHANNEL_ID)
-print(GEMINI_API_KEY)
-
 client = WebClient(token=SLACK_TOKEN)
 # openAiClient = openai.OpenAI(api_key=OPENAI_API_KEY)
 genai.configure(api_key=GEMINI_API_KEY)
@@ -58,7 +54,7 @@ def get_all_messages(channel_id, start_ts, end_ts):
             messages.extend(response["messages"])
             
             # 다음 페이지 없으면 종료
-            if response.get("has_more"):
+            if not response.get("has_more"):
                 break
             
             # 다음 커서 설정
@@ -115,8 +111,8 @@ def summarize_messages(messages):
 
 def post_summary(summary):
     client.chat_postMessage(
-        # channel=CHANNEL_ID,
-        channel="C0924850G11",
+        channel=CHANNEL_ID,
+        # channel="C0924850G11",
         text="에러 알림 전일자 요약",
         blocks=[
             {
