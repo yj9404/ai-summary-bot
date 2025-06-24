@@ -1,9 +1,11 @@
 # slack_summary.py
 import os
 import datetime
+import time
 # import openai
 import google.generativeai as genai
 from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 # 기본 설정
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
@@ -30,6 +32,7 @@ def get_yesterday_messages():
         content = extract_message_text(msg)
         if content:
             messages.append(content)
+    print(len(messages))
     
     return messages
 
@@ -38,24 +41,34 @@ def get_all_messages(channel_id, start_ts, end_ts):
     cursor = None
 
     while True:
-        response = client.conversations_history(
-            channel=channel_id,
-            oldest=start_ts,
-            latest=end_ts,
-            limit=200,
-            inclusive=True,
-            cursor=cursor
-        )
-        
-        messages.extend(response["messages"])
-        
-        # 다음 페이지 없으면 종료
-        if not response.get("has_more"):
-            break
-        
-        # 다음 커서 설정
-        cursor = response["response_metadata"]["next_cursor"]
-    
+        try:
+            response = client.conversations_history(
+                channel=channel_id,
+                oldest=start_ts,
+                latest=end_ts,
+                limit=999,
+                inclusive=True,
+                cursor=cursor
+            )
+            
+            messages.extend(response["messages"])
+            
+            # 다음 페이지 없으면 종료
+            if response.get("has_more"):
+                break
+            
+            # 다음 커서 설정
+            cursor = response["response_metadata"]["next_cursor"]
+            time.sleep(0.3)
+        except SlackApiError as e:
+            if e.response["error"] == "ratelimited": #대기..
+                retry_after = int(e.response.headers.get("Retry-After", 1))
+                print(f"Rate limited. Retrying after {retry_after} seconds...")
+                time.sleep(retry_after)
+                continue
+            else:
+                raise
+
     return messages
 
 
@@ -98,15 +111,17 @@ def summarize_messages(messages):
 
 def post_summary(summary):
     client.chat_postMessage(
-        channel=CHANNEL_ID,
-        # channel="C0924850G11",
+        # channel=CHANNEL_ID,
+        channel="C0924850G11",
         text="에러 알림 전일자 요약",
         blocks=[
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*📋 본 요약은 참고용입니다.*\n\n{summary}"
+                    "text": f"""*📋 본 요약은 참고용입니다.*
+                    알림 요약 ({(datetime.date.today() - datetime.timedelta(days=1)).isoformat()})
+                    {summary}"""
                 }
             }
         ]
