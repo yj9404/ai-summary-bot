@@ -16,6 +16,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = WebClient(token=SLACK_TOKEN)
 # openAiClient = openai.OpenAI(api_key=OPENAI_API_KEY)
 genai.configure(api_key=GEMINI_API_KEY)
+print(SLACK_TOKEN)
+print(CHANNEL_ID)
+print(GEMINI_API_KEY)
 
 def get_yesterday_messages():
     now = datetime.datetime.now()
