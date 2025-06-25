@@ -8,6 +8,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 KST = timezone(timedelta(hours=9))
+kst_now = datetime.now(KST)
 
 # 기본 설정
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
@@ -20,10 +21,10 @@ client = WebClient(token=SLACK_TOKEN)
 genai.configure(api_key=GEMINI_API_KEY)
 
 def get_yesterday_messages():
-    now = datetime.datetime.now(KST)
-    yesterday = now - datetime.timedelta(days=1)
-    start = datetime.datetime(yesterday.year, yesterday.month, yesterday.day)
-    end = start + datetime.timedelta(days=1)
+    yesterday = kst_now - timedelta(days=1)
+    # yesterday = kst_now
+    start = datetime(yesterday.year, yesterday.month, yesterday.day)
+    end = start + timedelta(days=1)
 
     raw_messages = get_all_messages(CHANNEL_ID, start.timestamp(), end.timestamp())
     messages = []
@@ -122,7 +123,7 @@ def post_summary(summary):
                 "text": {
                     "type": "mrkdwn",
                     "text": f"""*📋 본 요약은 참고용입니다.*
-                    알림 요약 ({(datetime.date.today() - datetime.timedelta(days=1)).isoformat()})
+                    알림 요약 ({(kst_now - timedelta(days=1)).date().isoformat()})
                     {summary}"""
                 }
             }
@@ -143,14 +144,14 @@ def extract_message_text(message):
 
 
 if __name__ == "__main__":
-    now = datetime.datetime.now(KST)
-    yesterday = now - datetime.timedelta(days=1)
-    start = datetime.datetime(yesterday.year, yesterday.month, yesterday.day)
-    end = start + datetime.timedelta(days=1)
-    print(now)
+    yesterday = kst_now - timedelta(days=1)
+    start = datetime(yesterday.year, yesterday.month, yesterday.day)
+    end = start + timedelta(days=1)
+    print(kst_now)
     print(yesterday)
     print(start)
     print(end)
+    print((kst_now - timedelta(days=1)).date().isoformat())
     # messages = get_yesterday_messages()
     # summary = summarize_messages(messages)
     # post_summary(summary)
