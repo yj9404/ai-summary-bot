@@ -1,11 +1,13 @@
 # slack_summary.py
 import os
-import datetime
+from datetime import datetime, timedelta, timezone
 import time
 # import openai
 import google.generativeai as genai
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+
+KST = timezone(timedelta(hours=9))
 
 # 기본 설정
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
@@ -18,7 +20,7 @@ client = WebClient(token=SLACK_TOKEN)
 genai.configure(api_key=GEMINI_API_KEY)
 
 def get_yesterday_messages():
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(KST)
     yesterday = now - datetime.timedelta(days=1)
     start = datetime.datetime(yesterday.year, yesterday.month, yesterday.day)
     end = start + datetime.timedelta(days=1)
@@ -141,7 +143,14 @@ def extract_message_text(message):
 
 
 if __name__ == "__main__":
-    print(datetime.datetime.now())
+    now = datetime.datetime.now(KST)
+    yesterday = now - datetime.timedelta(days=1)
+    start = datetime.datetime(yesterday.year, yesterday.month, yesterday.day)
+    end = start + datetime.timedelta(days=1)
+    print(now)
+    print(yesterday)
+    print(start)
+    print(end)
     # messages = get_yesterday_messages()
     # summary = summarize_messages(messages)
     # post_summary(summary)
