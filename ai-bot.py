@@ -152,6 +152,6 @@ if __name__ == "__main__":
     print(start)
     print(end)
     print((kst_now - timedelta(days=1)).date().isoformat())
-    # messages = get_yesterday_messages()
+    messages = get_yesterday_messages()
     # summary = summarize_messages(messages)
     # post_summary(summary)
