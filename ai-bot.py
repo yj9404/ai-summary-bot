@@ -144,17 +144,7 @@ def extract_message_text(message):
 
 
 if __name__ == "__main__":
-    yesterday = kst_now - timedelta(days=1)
-    start = datetime(yesterday.year, yesterday.month, yesterday.day, tzinfo=KST)
-    end = start + timedelta(days=1)
-    print(kst_now)
-    print(yesterday)
-    print(start)
-    print(end)
-    print((kst_now - timedelta(days=1)).date().isoformat())
-    print(start.timestamp())
-    print(end.timestamp())
-    # messages = get_yesterday_messages()
+    messages = get_yesterday_messages()
     # print(messages)
     # summary = summarize_messages(messages)
     # post_summary(summary)
