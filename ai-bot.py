@@ -145,6 +145,5 @@ def extract_message_text(message):
 
 if __name__ == "__main__":
     messages = get_yesterday_messages()
-    # print(messages)
-    # summary = summarize_messages(messages)
-    # post_summary(summary)
+    summary = summarize_messages(messages)
+    post_summary(summary)
