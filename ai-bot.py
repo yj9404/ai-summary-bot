@@ -23,7 +23,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 def get_yesterday_messages():
     yesterday = kst_now - timedelta(days=1)
     # yesterday = kst_now
-    start = datetime(yesterday.year, yesterday.month, yesterday.day)
+    start = datetime(yesterday.year, yesterday.month, yesterday.day, tzinfo=KST)
     end = start + timedelta(days=1)
 
     raw_messages = get_all_messages(CHANNEL_ID, start.timestamp(), end.timestamp())
@@ -145,7 +145,7 @@ def extract_message_text(message):
 
 if __name__ == "__main__":
     yesterday = kst_now - timedelta(days=1)
-    start = datetime(yesterday.year, yesterday.month, yesterday.day)
+    start = datetime(yesterday.year, yesterday.month, yesterday.day, tzinfo=KST)
     end = start + timedelta(days=1)
     print(kst_now)
     print(yesterday)
