@@ -112,24 +112,41 @@ def summarize_messages(messages):
     response = model.generate_content(prompt)
     return response.text.strip()
 
+def split_text_into_chunks(text, chunk_size=3000):
+    """Slack block text 제한(3000자)에 맞춰 문자열 분할"""
+    return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+
 def post_summary(summary):
+    # 기본 헤더
+    header_text = (
+        f"*📋 본 요약은 참고용입니다.*\n"
+        f"알림 요약 ({(kst_now - timedelta(days=1)).date().isoformat()})\n"
+    )
+
+    # 전체 텍스트 (헤더 + summary)
+    full_text = header_text + summary
+
+    # 3000자 제한에 맞춰 분할
+    chunks = split_text_into_chunks(full_text, 3000)
+
+    # 블록 생성
+    blocks = []
+    for chunk in chunks:
+        blocks.append({
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": chunk
+            }
+        })
+
+    # 메시지 전송
     client.chat_postMessage(
         channel=CHANNEL_ID,
         # channel="C0924850G11",
         text="에러 알림 전일자 요약",
-        blocks=[
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"""*📋 본 요약은 참고용입니다.*
-                    알림 요약 ({(kst_now - timedelta(days=1)).date().isoformat()})
-                    {summary}"""
-                }
-            }
-        ]
+        blocks=blocks
     )
-
 
 def extract_message_text(message):
     # blocks 안에 있는 텍스트 추출
