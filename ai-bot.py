@@ -76,7 +76,7 @@ def get_all_messages(channel_id, start_ts, end_ts):
 
 
 def summarize_messages(messages):
-    if not messages:
+    if len(messages) < 2:
         return "어제는 알림 메시지가 없습니다."
 
     joined = "\n".join(messages)
