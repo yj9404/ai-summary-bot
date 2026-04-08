@@ -27,14 +27,7 @@ def get_yesterday_messages():
     end = start + timedelta(days=1)
 
     raw_messages = get_all_messages(CHANNEL_ID, start.timestamp(), end.timestamp())
-    messages = []
-
-    for msg in raw_messages:
-        if msg.get("user") == "U092ANCTSKU": #자신 제외
-            continue
-        content = extract_message_text(msg)
-        if content:
-            messages.append(content)
+    messages = [content for msg in raw_messages if msg.get("user") != "U092ANCTSKU" and (content := extract_message_text(msg))]
     print(len(messages))
     
     return messages
