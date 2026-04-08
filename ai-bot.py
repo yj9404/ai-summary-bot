@@ -143,7 +143,6 @@ def post_summary(summary):
     # 메시지 전송
     client.chat_postMessage(
         channel=CHANNEL_ID,
-        # channel="C0924850G11",
         text="에러 알림 전일자 요약",
         blocks=blocks
     )
