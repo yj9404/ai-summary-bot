@@ -2,7 +2,6 @@
 import os
 from datetime import datetime, timedelta, timezone
 import time
-# import openai
 import google.generativeai as genai
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -14,10 +13,8 @@ kst_now = datetime.now(KST)
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 client = WebClient(token=SLACK_TOKEN)
-# openAiClient = openai.OpenAI(api_key=OPENAI_API_KEY)
 genai.configure(api_key=GEMINI_API_KEY)
 
 def get_yesterday_messages():
@@ -95,18 +92,6 @@ def summarize_messages(messages):
 {joined}
 --- MESSAGES END ---
 """
-    #oepnAi
-    # response = openAiClient.chat.completions.create(
-    #     model="gpt-3.5-turbo",
-    #     messages=[
-    #         {"role": "system", "content": "당신은 알림 메시지를 요약하는 비서입니다."},
-    #         {"role": "user", "content": user_content}
-    #     ],
-    #     temperature=0.3,
-    #     max_tokens=500
-    # )
-    # return response.choices[0].message.content.strip()
-
     #Gemini
     model = genai.GenerativeModel(
         model_name='gemini-2.5-flash',
