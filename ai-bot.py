@@ -2,7 +2,9 @@
 import os
 from datetime import datetime, timedelta, timezone
 import time
-import google.generativeai as genai
+import itertools
+from google import genai
+from google.genai import types
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -15,7 +17,7 @@ CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 client = WebClient(token=SLACK_TOKEN)
-genai.configure(api_key=GEMINI_API_KEY)
+genai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 def get_yesterday_messages():
     yesterday = kst_now - timedelta(days=1)
@@ -92,11 +94,13 @@ def summarize_messages(messages):
 --- MESSAGES END ---
 """
     #Gemini
-    model = genai.GenerativeModel(
-        model_name='gemini-2.5-flash',
-        system_instruction=system_instruction
+    response = genai_client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=user_content,
+        config=types.GenerateContentConfig(
+            system_instruction=system_instruction
+        )
     )
-    response = model.generate_content(user_content)
     return response.text.strip()
 
 def split_text_into_chunks(text, chunk_size=3000):
