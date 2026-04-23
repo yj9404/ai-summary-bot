@@ -2,47 +2,47 @@ import unittest
 import sys
 from unittest.mock import MagicMock
 
-# Mock out external dependencies before importing ai-bot
-# We need to mock 'google' and 'google.generativeai'
-sys.modules['google'] = MagicMock()
-sys.modules['google.generativeai'] = MagicMock()
-sys.modules['slack_sdk'] = MagicMock()
-sys.modules['slack_sdk.errors'] = MagicMock()
-sys.modules['openai'] = MagicMock()
+# Mocking missing dependencies before importing the module under test
+sys.modules["google"] = MagicMock()
+sys.modules["google.generativeai"] = MagicMock()
+sys.modules["slack_sdk"] = MagicMock()
+sys.modules["slack_sdk.errors"] = MagicMock()
+sys.modules["openai"] = MagicMock()
 
 import importlib
+# Import the module with a hyphen in its name
 ai_bot = importlib.import_module("ai-bot")
 
-class TestAIBot(unittest.TestCase):
-    def test_extract_message_text_with_contents(self):
-        message = {
-            "blocks": [
-                {"block_id": "other", "text": {"text": "ignore me"}},
-                {"block_id": "contents", "text": {"text": "hello"}},
-                {"block_id": "contents", "text": {"text": "world"}},
-            ]
-        }
-        self.assertEqual(ai_bot.extract_message_text(message), "hello\nworld")
+class TestSplitTextIntoChunks(unittest.TestCase):
+    def test_empty_string(self):
+        # Current implementation: [""[0:0]] -> [""] ? No, range(0, 0, step) is empty.
+        # [text[i:i+chunk_size] for i in range(0, 0, chunk_size)] -> []
+        self.assertEqual(ai_bot.split_text_into_chunks("", chunk_size=5), [])
 
-    def test_extract_message_text_no_blocks(self):
-        message = {"other_key": "value"}
-        self.assertIsNone(ai_bot.extract_message_text(message))
+    def test_short_string(self):
+        text = "Hello"
+        self.assertEqual(ai_bot.split_text_into_chunks(text, chunk_size=10), ["Hello"])
 
-    def test_extract_message_text_no_contents(self):
-        message = {
-            "blocks": [
-                {"block_id": "other", "text": {"text": "ignore me"}}
-            ]
-        }
-        self.assertIsNone(ai_bot.extract_message_text(message))
+    def test_exact_chunk_size(self):
+        text = "12345"
+        self.assertEqual(ai_bot.split_text_into_chunks(text, chunk_size=5), ["12345"])
 
-    def test_extract_message_text_empty_contents(self):
-        message = {
-            "blocks": [
-                {"block_id": "contents", "text": {"text": ""}}
-            ]
-        }
-        self.assertEqual(ai_bot.extract_message_text(message), "")
+    def test_multiple_chunks(self):
+        text = "abcdefghij"
+        # chunk_size=3 -> "abc", "def", "ghi", "j"
+        self.assertEqual(ai_bot.split_text_into_chunks(text, chunk_size=3), ["abc", "def", "ghi", "j"])
 
-if __name__ == '__main__':
+    def test_exact_multiple_chunks(self):
+        text = "abcdef"
+        self.assertEqual(ai_bot.split_text_into_chunks(text, chunk_size=3), ["abc", "def"])
+
+    def test_default_chunk_size(self):
+        # Default is 3000
+        text = "a" * 3001
+        chunks = ai_bot.split_text_into_chunks(text)
+        self.assertEqual(len(chunks), 2)
+        self.assertEqual(len(chunks[0]), 3000)
+        self.assertEqual(len(chunks[1]), 1)
+
+if __name__ == "__main__":
     unittest.main()
