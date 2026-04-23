@@ -52,7 +52,6 @@ def get_all_messages(channel_id, start_ts, end_ts):
             
             # 다음 커서 설정
             cursor = response["response_metadata"]["next_cursor"]
-            time.sleep(0.3)
         except SlackApiError as e:
             if e.response["error"] == "ratelimited": #대기..
                 retry_after = int(e.response.headers.get("Retry-After", 1))
