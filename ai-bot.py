@@ -138,11 +138,20 @@ def post_summary(summary):
 def extract_message_text(message):
     # blocks 안에 있는 텍스트 추출
     if "blocks" in message:
-        texts = []
-        for block in message["blocks"]:
-            if block.get("block_id") == "contents":
-                texts.append(block.get("text", {}).get("text", ""))
-        return "\n".join(texts) if texts else None
+        texts = (
+            block.get("text", {}).get("text", "")
+            for block in message["blocks"]
+            if block.get("block_id") == "contents"
+        )
+
+        # Check if there are any contents by peeking at the generator
+        try:
+            first_text = next(texts)
+        except StopIteration:
+            return None
+
+        # If there are contents, join them (including the first one we peeked)
+        return "\n".join(itertools.chain([first_text], texts))
 
     return None  # 인식 불가
 
