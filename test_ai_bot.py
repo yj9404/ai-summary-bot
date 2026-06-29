@@ -9,10 +9,8 @@ google_mock.__path__ = []
 sys.modules["google"] = google_mock
 sys.modules["google.genai"] = MagicMock()
 sys.modules["google.genai.types"] = MagicMock()
-sys.modules["google.generativeai"] = MagicMock()
 sys.modules["slack_sdk"] = MagicMock()
 sys.modules["slack_sdk.errors"] = MagicMock()
-sys.modules["openai"] = MagicMock()
 
 os.environ["SLACK_BOT_TOKEN"] = "dummy_token"
 os.environ["SLACK_CHANNEL_ID"] = "dummy_channel"
@@ -96,6 +94,13 @@ class TestExtractMessageText(unittest.TestCase):
         # block.get("text", {}).get("text", "") -> ""
         # Joins with "\n" -> "\n"
         self.assertEqual(ai_bot.extract_message_text(message), "\n")
+
+class TestSummarizeMessages(unittest.TestCase):
+    def test_empty_messages(self):
+        self.assertEqual(ai_bot.summarize_messages([]), "어제는 알림 메시지가 없습니다.")
+
+    def test_single_message(self):
+        self.assertEqual(ai_bot.summarize_messages(["single message"]), "어제는 알림 메시지가 없습니다.")
 
 if __name__ == "__main__":
     unittest.main()
