@@ -43,11 +43,12 @@ def get_yesterday_messages():
     
     return messages
 
-def get_all_messages(channel_id, start_ts, end_ts):
+def get_all_messages(channel_id, start_ts, end_ts, max_pages=100):
     messages = []
     cursor = None
+    pages_fetched = 0
 
-    while True:
+    while pages_fetched < max_pages:
         try:
             response = client.conversations_history(
                 channel=channel_id,
@@ -59,6 +60,7 @@ def get_all_messages(channel_id, start_ts, end_ts):
             )
             
             messages.extend(response["messages"])
+            pages_fetched += 1
             
             # 다음 페이지 없으면 종료
             if not response.get("has_more"):
