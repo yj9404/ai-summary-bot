@@ -34,7 +34,6 @@ genai_client = genai.Client(
 
 def get_yesterday_messages():
     yesterday = kst_now - timedelta(days=1)
-    # yesterday = kst_now
     start = datetime(yesterday.year, yesterday.month, yesterday.day, tzinfo=KST)
     end = start + timedelta(days=1)
 
