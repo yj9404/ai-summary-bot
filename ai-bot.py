@@ -32,7 +32,6 @@ def get_yesterday_messages():
     return messages
 
 def get_all_messages(channel_id, start_ts, end_ts):
-    messages = []
     cursor = None
 
     while True:
@@ -46,7 +45,7 @@ def get_all_messages(channel_id, start_ts, end_ts):
                 cursor=cursor
             )
             
-            messages.extend(response["messages"])
+            yield from response["messages"]
             
             # 다음 페이지 없으면 종료
             if not response.get("has_more"):
@@ -63,11 +62,10 @@ def get_all_messages(channel_id, start_ts, end_ts):
             else:
                 raise
 
-    return messages
-
 
 def summarize_messages(messages):
-    if len(messages) < 2:
+    messages_list = list(messages) if not isinstance(messages, list) else messages
+    if len(messages_list) < 2:
         return "어제는 알림 메시지가 없습니다."
 
     system_instruction = """당신은 Slack 알림 메시지를 요약하는 비서입니다.
@@ -87,7 +85,7 @@ def summarize_messages(messages):
             • API: 청구서 조회(/kakao/notice): X건
 """
 
-    joined = "\n".join(messages)
+    joined = "\n".join(messages_list)
     user_content = f"""다음은 오늘 Slack 알림 메시지 목록입니다:
 --- MESSAGES START ---
 {joined}
