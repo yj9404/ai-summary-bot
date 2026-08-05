@@ -95,7 +95,7 @@ def summarize_messages(messages):
 """
     #Gemini
     response = genai_client.models.generate_content(
-        model='gemini-2.5-flash',
+        model='gemini-3.6-flash',
         contents=user_content,
         config=types.GenerateContentConfig(
             system_instruction=system_instruction
