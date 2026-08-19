@@ -29,7 +29,7 @@ if not gcp_project_id and gcp_creds_path and os.path.exists(gcp_creds_path):
 genai_client = genai.Client(
     vertexai=True,
     project=gcp_project_id,
-    location=os.getenv("GCP_LOCATION", "asia-northeast3")
+    location=os.getenv("GCP_LOCATION", "global")
 )
 
 def get_yesterday_messages():
