@@ -14,10 +14,23 @@ kst_now = datetime.now(KST)
 # 기본 설정
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
 CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+import json
 
 client = WebClient(token=SLACK_TOKEN)
-genai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+# Google Cloud Vertex AI 연동 설정
+gcp_creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+gcp_project_id = os.getenv("GCP_PROJECT_ID")
+
+if not gcp_project_id and gcp_creds_path and os.path.exists(gcp_creds_path):
+    with open(gcp_creds_path, 'r') as f:
+        gcp_project_id = json.load(f).get("project_id")
+
+genai_client = genai.Client(
+    vertexai=True,
+    project=gcp_project_id,
+    location=os.getenv("GCP_LOCATION", "asia-northeast3")
+)
 
 def get_yesterday_messages():
     yesterday = kst_now - timedelta(days=1)

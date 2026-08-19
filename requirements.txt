@@ -1,3 +1,4 @@
 slack_sdk
 google-genai
+google-cloud-aiplatform
 packaging>=23.0
