@@ -1,11 +1,22 @@
 import time
+import os
 import importlib
 import sys
 from unittest.mock import MagicMock, patch
 
+# Set required environment variables before importing ai-bot
+os.environ["SLACK_BOT_TOKEN"] = "dummy"
+os.environ["SLACK_CHANNEL_ID"] = "dummy"
+os.environ["GEMINI_API_KEY"] = "dummy"
+
 # Mock modules to avoid initialization errors
-sys.modules['google.generativeai'] = MagicMock()
-sys.modules['openai'] = MagicMock()
+google_mock = MagicMock()
+google_mock.__path__ = []
+sys.modules["google"] = google_mock
+sys.modules["google.genai"] = MagicMock()
+sys.modules["google.genai.types"] = MagicMock()
+sys.modules["slack_sdk"] = MagicMock()
+sys.modules["slack_sdk.errors"] = MagicMock()
 
 ai_bot = importlib.import_module("ai-bot")
 
