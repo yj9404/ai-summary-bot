@@ -99,7 +99,11 @@ def summarize_messages(messages):
             • API: 청구서 조회(/kakao/notice): X건
 """
 
-    joined = "\n".join(messages)
+    sanitized_messages = [
+        msg.replace("--- MESSAGES START ---", "[REDACTED]").replace("--- MESSAGES END ---", "[REDACTED]")
+        for msg in messages
+    ]
+    joined = "\n".join(sanitized_messages)
     user_content = f"""다음은 오늘 Slack 알림 메시지 목록입니다:
 --- MESSAGES START ---
 {joined}
